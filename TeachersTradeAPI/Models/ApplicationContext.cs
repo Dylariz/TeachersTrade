@@ -9,14 +9,9 @@ public sealed class ApplicationContext : DbContext
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
     {
-        try
-        {
-            Database.CanConnect();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        if (Database.CanConnect()) return;
+        Console.WriteLine("Database connection failed, check your connection properties");
+        throw new Exception("Database connection failed");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

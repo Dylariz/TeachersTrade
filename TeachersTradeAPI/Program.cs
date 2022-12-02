@@ -5,7 +5,7 @@ using TeachersTradeAPI.Models;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 
-builder.WebHost.UseUrls(configuration.GetSection("ApplicationUrls").Value ?? "http://localhost:5000");
+builder.WebHost.UseUrls(configuration.GetSection("ApplicationUrls").Value ?? "https://localhost:7259");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
