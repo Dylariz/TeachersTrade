@@ -14,14 +14,27 @@ public class UsersController : ControllerBase
         _db = context;
     }
     
+    /// <summary>
+    /// Get all users
+    /// </summary>
+    /// <response code="200">Returns Json representation of Users table</response>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IEnumerable<User> GetAllUsers()
     {
         return _db.Users;
     }
     
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    /// <summary>
+    /// Get user by id
+    /// </summary>
+    /// <param name="id">Key value in database</param>
+    /// <response code="200">Returns Json representation of one User</response>
+    /// <response code="404">If the user is not found</response>
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<User>> GetUserById(int id)
     {
          var user = await _db.Users.FindAsync(id);
          if (user != null)
@@ -32,15 +45,53 @@ public class UsersController : ControllerBase
          return new NotFoundResult();
     }
     
+    /// <summary>
+    /// Create new user
+    /// </summary>
+    /// <param name="newUser">Json representation of new User without id</param>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /API/Users
+    ///     {
+    ///        "name": "John",
+    ///        "email": "example@gmail.com",
+    ///        "password": "example123"
+    ///     }
+    ///
+    /// </remarks>
+    /// <response code="201">Returns Json representation of new User with new id</response>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<User>> AddUser(User newUser)
     {
+        // TODO: Add json validation
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();
         return new CreatedAtActionResult("AddUser", "Users", null, newUser);
     }
     
+    /// <summary>
+    /// Update existing user
+    /// </summary>
+    /// <param name="updateUser">Json representation of new User with id</param>
+    /// /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /API/Users
+    ///     {
+    ///        "id": 1,
+    ///        "name": "John",
+    ///        "email": "example@gmail.com",
+    ///        "password": "example123"
+    ///     }
+    ///
+    /// </remarks>
+    /// <response code="200">Returns Json representation of updated User</response>
+    /// <response code="404">If the user is not found</response>
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<User>> UpdateUser(User updateUser)
     {
         var user = await _db.Users.FindAsync(updateUser.Id);
@@ -52,13 +103,21 @@ public class UsersController : ControllerBase
         return new OkResult();
     }
     
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
+    /// <summary>
+    /// Delete user by id
+    /// </summary>
+    /// <param name="id">Key value in database</param>
+    /// <response code="200">Returns Json representation of deleted User</response>
+    /// <response code="404">If the user is not found</response>
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<User>> DeleteUser(int id)
     {
         var user = await _db.Users.FindAsync(id);
         if (user == null) return new NotFoundResult();
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
-        return new OkResult();
+        return user;
     }
 }

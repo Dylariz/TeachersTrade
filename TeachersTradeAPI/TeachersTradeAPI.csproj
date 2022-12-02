@@ -6,6 +6,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-TeachersTrade-F5350970-D9A4-455A-AB0F-28DE33064B6F</UserSecretsId>
         <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+		<Title>TeachersTradeAPI</Title>
+		<Authors>Dylariz</Authors>
+		<Copyright>Dylariz</Copyright>
+		<PackageLicenseUrl>https://github.com/Dylariz/TeachersTrade/blob/master/LICENSE</PackageLicenseUrl>
+		<RepositoryUrl>https://github.com/Dylariz/TeachersTrade/</RepositoryUrl>
+		<RepositoryType>GitHub</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,6 +44,9 @@
 
     <ItemGroup>
       <None Remove="Services\**" />
+      <None Update="docker-compose.yml">
+        <DependentUpon>Dockerfile</DependentUpon>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
