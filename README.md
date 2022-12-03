@@ -1,2 +1,3 @@
 # TeachersTrade
-Change appsettings.json file to configure database options.
+This is a website about selling teachers to others.
+Take it as a joke ;)
