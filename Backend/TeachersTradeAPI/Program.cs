@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.OpenApi.Models;
 using TeachersTradeAPI.Models;
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 
 builder.WebHost.UseUrls(configuration.GetSection("ApplicationUrls").Value ?? "https://localhost:7259");
+
+builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -35,6 +38,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 

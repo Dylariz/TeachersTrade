@@ -79,7 +79,7 @@ public class TeachersController : ControllerBase
     /// Update existing teacher
     /// </summary>
     /// <param name="updateTeacher">Json representation of new Teacher with id</param>
-    /// /// <remarks>
+    /// <remarks>
     /// Sample request:
     ///
     ///     POST /API/Teachers
