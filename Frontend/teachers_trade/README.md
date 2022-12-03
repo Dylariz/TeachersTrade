@@ -1,4 +1,4 @@
-# teach_trades
+# teachers_trade
 
 A new Flutter project.
 
