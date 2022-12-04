@@ -1,4 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using TeachersTradeAPI.Models;
 
@@ -58,12 +59,13 @@ public class UsersController : ControllerBase
     /// <b>— Role can be "user" or "admin"</b>
     /// </remarks>
     /// <response code="201">Returns Json representation of new User with new id</response>
+    /// <response code="400">Incorrect data</response>
     [HttpPost]
     public async Task<ActionResult<User>> AddUser(User newUser)
     {
-        // TODO: Add json validation
-        if (newUser.Password != null) 
-            newUser.Password = Global.CreateMd5(newUser.Password);
+        if (CheckUser(newUser))
+            return BadRequest("Incorrect data");
+        newUser.Password = Global.CreateMd5(newUser.Password);
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();
         return CreatedAtAction("AddUser", "Users", null, newUser);
@@ -89,10 +91,13 @@ public class UsersController : ControllerBase
     /// <b>— Role can be "user" or "admin"</b>
     /// </remarks>
     /// <response code="200">Returns Json representation of updated User</response>
+    /// <response code="400">Incorrect data</response>
     /// <response code="404">If the User is not found</response>
     [HttpPut]
     public async Task<ActionResult<User>> UpdateUser(User updateUser)
     {
+        if (CheckUser(updateUser))
+            return BadRequest("Incorrect data");
         var user = await _db.Users.FindAsync(updateUser.Id);
         if (user == null) return NotFound();
         user.Name = updateUser.Name;
@@ -120,5 +125,35 @@ public class UsersController : ControllerBase
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
         return user;
+    }
+    
+    private bool CheckUser(User? user)
+    {
+        // Name validation
+        if (user?.Name == null || user.Name.Length < 3 || _db.Users.FirstOrDefault(u => u.Name == user.Name) != null) return false;
+        // Email validation
+        try
+        {
+            var m = new MailAddress(user.Email!);
+        }
+        catch (Exception) { return false; }
+        
+        // Password validation
+        var hasNumber = new Regex(@"[0-9]+");
+        var hasUpperChar = new Regex(@"[A-Z]+");
+        var hasMinimum8Chars = new Regex(@".{8,}");
+
+        if (user.Password == null || hasNumber.IsMatch(user.Password) || hasUpperChar.IsMatch(user.Password) ||
+            hasMinimum8Chars.IsMatch(user.Password))
+            return false;
+
+        // Role validation
+        if (user.Role is not ("admin" or "user"))
+        {
+            user.Role = "user";
+        }
+
+        // Balance validation
+        return user.Balance is not (< 0 or > 1000000);
     }
 }
