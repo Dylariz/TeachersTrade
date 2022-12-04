@@ -62,7 +62,7 @@ public class UsersController : ControllerBase
     ///        "email": "example@gmail.com",
     ///        "password": "example123",
     ///        "role": "student",
-    ///        "balance": 0
+    ///        "balance": 60.5
     ///     }
     ///
     /// </remarks>
@@ -91,7 +91,7 @@ public class UsersController : ControllerBase
     ///        "email": "example@gmail.com",
     ///        "password": "example123"
     ///        "role": "student",
-    ///        "balance": 0
+    ///        "balance": 60.5
     ///     }
     ///
     /// </remarks>

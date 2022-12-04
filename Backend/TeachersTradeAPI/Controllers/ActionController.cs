@@ -16,7 +16,7 @@ public class ActionController : ControllerBase
         _db = context;
     }
     
-    [HttpPost("{userId:int}/buy/{teacherId:int}")]
+    /*[HttpPost("{userId:int}/buy/{teacherId:int}")]
     public async Task<ActionResult<User>> BuyTeacher(int userId, int teacherId)
     {
         _db.Teachers.ToList();
@@ -44,5 +44,5 @@ public class ActionController : ControllerBase
         user.PurchasedTeachers?.Remove(teacher);
         await _db.SaveChangesAsync();
         return new OkResult();
-    }
+    }*/
 }

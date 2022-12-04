@@ -6,6 +6,7 @@ public sealed class ApplicationContext : DbContext
 {
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Teacher> Teachers { get; set; } = null!;
+    public DbSet<Share> Shares { get; set; } = null!;
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
     {

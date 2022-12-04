@@ -58,6 +58,7 @@ public class TeachersController : ControllerBase
     ///        "subject": "Math",
     ///        "age": 30,
     ///        "description": "Good teacher",
+    ///        "shareCount": 1000,
     ///        "price": 300.53
     ///     }
     ///
@@ -89,6 +90,7 @@ public class TeachersController : ControllerBase
     ///        "subject": "Math",
     ///        "age": 30,
     ///        "description": "Good teacher",
+    ///        "shareCount": 1000,
     ///        "price": 300.53
     ///     }
     ///
@@ -108,6 +110,7 @@ public class TeachersController : ControllerBase
         teacher.Subject = updateTeacher.Subject;
         teacher.Age = updateTeacher.Age;
         teacher.Description = updateTeacher.Description;
+        teacher.ShareCount = updateTeacher.ShareCount;
         teacher.Price = updateTeacher.Price;
         await _db.SaveChangesAsync();
         return new OkResult();

@@ -8,5 +8,4 @@ public class User
     public string? Password { get; set; }
     public string? Role { get; set; }
     public double? Balance { get; set; }
-    public List<Teacher>? PurchasedTeachers { get; set; }
 }
