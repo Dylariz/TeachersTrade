@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.OpenApi.Models;
+using TeachersTradeAPI;
 using TeachersTradeAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", o
 builder.WebHost.UseUrls(configuration.GetSection("ApplicationUrls").Value ?? "https://localhost:7259");
 
 builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();
+
+// TODO: Configure certificates and authentication
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -44,5 +47,10 @@ app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+if (configuration["DefaultMaxSharesForTeacher"] != string.Empty)
+{
+    Global.DefaultMaxShares = configuration.GetValue<int>("DefaultMaxSharesForTeacher");
+}
 
 app.Run();

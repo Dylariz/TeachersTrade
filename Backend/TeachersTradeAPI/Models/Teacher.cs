@@ -7,6 +7,6 @@ public class Teacher
     public string? Subject { get; set; }
     public int? Age { get; set; }
     public string? Description { get; set; }
-    public int? ShareCount { get; set; }
+    public int? MaxShares { get; set; }
     public double? Price { get; set; }
 }
