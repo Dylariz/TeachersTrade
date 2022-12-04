@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using TeachersTradeAPI.Models;
 
@@ -5,10 +6,11 @@ namespace TeachersTradeAPI.Controllers;
 
 [ApiController]
 [Route("API/[controller]")]
+[SuppressMessage("ReSharper", "ReturnValueOfPureMethodIsNotUsed")]
 public class UsersController : ControllerBase
 {
     private ApplicationContext _db;
-    
+
     public UsersController(ApplicationContext context)
     {
         _db = context;
@@ -22,6 +24,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IEnumerable<User> GetAllUsers()
     {
+        _db.Teachers.ToList();
         return _db.Users;
     }
     
@@ -36,6 +39,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<User>> GetUserById(int id)
     {
+        _db.Teachers.ToList();
          var user = await _db.Users.FindAsync(id);
          if (user != null)
          {
@@ -56,7 +60,9 @@ public class UsersController : ControllerBase
     ///     {
     ///        "name": "John",
     ///        "email": "example@gmail.com",
-    ///        "password": "example123"
+    ///        "password": "example123",
+    ///        "role": "student",
+    ///        "balance": 0
     ///     }
     ///
     /// </remarks>
@@ -84,6 +90,8 @@ public class UsersController : ControllerBase
     ///        "name": "John",
     ///        "email": "example@gmail.com",
     ///        "password": "example123"
+    ///        "role": "student",
+    ///        "balance": 0
     ///     }
     ///
     /// </remarks>
@@ -99,10 +107,12 @@ public class UsersController : ControllerBase
         user.Name = updateUser.Name;
         user.Email = updateUser.Email;
         user.Password = updateUser.Password;
+        user.Role = updateUser.Role;
+        user.Balance = updateUser.Balance;
         await _db.SaveChangesAsync();
         return new OkResult();
     }
-    
+
     /// <summary>
     /// Delete user by id
     /// </summary>
