@@ -52,7 +52,6 @@ public class UsersController : ControllerBase
     ///        "name": "John",
     ///        "email": "example@gmail.com",
     ///        "password": "example123",
-    ///        "role": "user",
     ///        "balance": 60.5
     ///     }
     ///
@@ -63,8 +62,9 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<User>> AddUser(User newUser)
     {
-        if (CheckUser(newUser))
-            return BadRequest("Incorrect data");
+        newUser.Id = -1;
+        if (!CheckUser(newUser, out var message))
+            return BadRequest(message);
         newUser.Password = Global.CreateMd5(newUser.Password);
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();
@@ -84,7 +84,6 @@ public class UsersController : ControllerBase
     ///        "name": "John",
     ///        "email": "example@gmail.com",
     ///        "password": "example123"
-    ///        "role": "user",
     ///        "balance": 60.5
     ///     }
     /// 
@@ -96,17 +95,21 @@ public class UsersController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<User>> UpdateUser(User updateUser)
     {
-        if (CheckUser(updateUser))
-            return BadRequest("Incorrect data");
+        if (!CheckUser(updateUser, out var message))
+            return BadRequest(message);
         var user = await _db.Users.FindAsync(updateUser.Id);
         if (user == null) return NotFound();
+        
         user.Name = updateUser.Name;
         user.Email = updateUser.Email;
+        
         if (updateUser.Password != null) 
             updateUser.Password = Global.CreateMd5(updateUser.Password);
+        
         user.Password = updateUser.Password;
         user.Role = updateUser.Role;
         user.Balance = updateUser.Balance;
+        
         await _db.SaveChangesAsync();
         return user;
     }
@@ -127,25 +130,40 @@ public class UsersController : ControllerBase
         return user;
     }
     
-    private bool CheckUser(User? user)
+    private bool CheckUser(User user, out string message)
     {
+        message = string.Empty;
+        var result = true;
         // Name validation
-        if (user?.Name == null || user.Name.Length < 3 || _db.Users.FirstOrDefault(u => u.Name == user.Name) != null) return false;
+        if (user.Name == null || user.Name.Length < 3 || _db.Users.FirstOrDefault(u => u.Name == user.Name && u.Id != user.Id) != null)
+        {
+            message += "Incorrect name.\n";
+            result = false;
+        }
+
         // Email validation
         try
         {
             var m = new MailAddress(user.Email!);
         }
-        catch (Exception) { return false; }
+        catch (Exception)
+        {
+            message += "Incorrect email form.\n";
+            result =  false;
+        }
         
         // Password validation
         var hasNumber = new Regex(@"[0-9]+");
-        var hasUpperChar = new Regex(@"[A-Z]+");
+        var hasEnglishChars = new Regex(@"[a-zA-Z]+");
         var hasMinimum8Chars = new Regex(@".{8,}");
 
-        if (user.Password == null || hasNumber.IsMatch(user.Password) || hasUpperChar.IsMatch(user.Password) ||
-            hasMinimum8Chars.IsMatch(user.Password))
-            return false;
+        if (user.Password == null || !hasNumber.IsMatch(user.Password) || !hasEnglishChars.IsMatch(user.Password) ||
+            !hasMinimum8Chars.IsMatch(user.Password))
+        {
+            message += "Incorrect password form.\n";
+            result =  false;
+        }
+            
 
         // Role validation
         if (user.Role is not ("admin" or "user"))
@@ -154,6 +172,12 @@ public class UsersController : ControllerBase
         }
 
         // Balance validation
-        return user.Balance is not (< 0 or > 1000000);
+        if (user.Balance is < 0 or > 1000000)
+        {
+            message += "Incorrect balance.";
+            result = false;
+        }
+
+        return result;
     }
 }

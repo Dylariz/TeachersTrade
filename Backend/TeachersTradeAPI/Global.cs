@@ -9,11 +9,8 @@ public static class Global
     {
         // Use input string to calculate MD5 hash
         using var md5 = System.Security.Cryptography.MD5.Create();
-        var inputBytes = md5.ComputeHash(Encoding.ASCII.GetBytes("SUS" + input));
+        var inputBytes = md5.ComputeHash(Encoding.ASCII.GetBytes($"SUS{input}AMOGUS is Cool, this is Teachers Trade"));
         inputBytes = md5.ComputeHash(inputBytes);
-
-        var additionalBytes = md5.ComputeHash(Encoding.ASCII.GetBytes("AMOGUS is Cool and this is Teachers Trade"));
-        inputBytes = inputBytes.Concat(additionalBytes).ToArray();
         inputBytes = md5.ComputeHash(inputBytes);
         return Convert.ToHexString(inputBytes);
     }

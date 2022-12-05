@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TeachersTradeAPI.Models;
 
 namespace TeachersTradeAPI.Controllers;
@@ -37,7 +38,22 @@ public class SharesController : ControllerBase
         var share = await _db.Shares.FindAsync(userId, teacherId);
         if (share == null)
             return NotFound();
-        return share;
+        return Ok(share);
+    }
+    
+    /// <summary>
+    /// Get all User Shares by User id
+    /// </summary>
+    /// <param name="userId">Id of the User</param>
+    /// <response code="200">Returns Json representation of Shares Array</response>
+    /// <response code="404">If the Shares is not found</response>
+    [HttpGet("{userId:int}")]
+    public async Task<ActionResult<Share>> GetSharesOfCurrentUser(int userId)
+    {
+        var shares = await _db.Shares.Where(s => s.UserId == userId).ToListAsync();
+        if (shares.Count == 0)
+            return NotFound();
+        return Ok(shares);
     }
 
 }

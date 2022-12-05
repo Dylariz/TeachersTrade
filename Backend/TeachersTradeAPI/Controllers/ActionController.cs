@@ -16,7 +16,7 @@ public class ActionController : ControllerBase
     }
     
     /// <summary>
-    /// Buy shares of a certain Teacher
+    /// Buy shares of a Teacher
     /// </summary>
     /// <param name="userId">Id of the User</param>
     /// <param name="teacherId">Id of the Teacher whose shares the user wants to buy</param>
@@ -66,7 +66,7 @@ public class ActionController : ControllerBase
     }
 
     /// <summary>
-    /// Sell shares of a certain Teacher
+    /// Sell shares of a Teacher
     /// </summary>
     /// <param name="userId">Id of the User</param>
     /// <param name="teacherId">Id of the purchased Teacher</param>
@@ -98,5 +98,24 @@ public class ActionController : ControllerBase
         return share;
     }
     
-    // TODO: Add balance change method
+    /// <summary>
+    /// Change user's balance
+    /// </summary>
+    /// <param name="userId">Id of the User</param>
+    /// <param name="balanceChange">Сhange in balance, can be positive and negative</param>
+    /// <response code="200">Balance changed</response>
+    /// <response code="400">If the balance is less than zero</response>
+    /// <response code="404">If the User is not found</response>
+    [HttpPost("ChangeBalance/")]
+    public async Task<IActionResult> ChangeBalance(int userId, int balanceChange)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user == null)
+            return NotFound();
+        if (user.Balance + balanceChange < 0)
+            return BadRequest("The balance cannot be less than zero");
+        user.Balance += balanceChange;
+        await _db.SaveChangesAsync();
+        return Ok();
+    }
 }
